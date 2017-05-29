@@ -46,7 +46,7 @@ class servidor(object):
     
     def create_server(self):
         #global jglobal
-        daemon = Pyro4.Daemon() 
+        daemon = Pyro4.Daemon(host='172.16.1.79', port=5388)
         ns = Pyro4.locateNS()
         uri = daemon.register(jogo) #TODO mudar a função
         ns.register("example.greeting", uri)
