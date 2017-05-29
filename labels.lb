@@ -1,0 +1,14 @@
+l_client Cliente
+l_server Servidor
+l_select Selecione uma opção
+l_ip IP
+l_port PORTA
+l_connect Conectar
+l_start Iniciar
+l_error Erro
+l_ok OK!
+l_nickname nickname
+l_round Round
+l_won Ganhou
+l_score Score
+l_lifes vidas
