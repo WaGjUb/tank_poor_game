@@ -93,13 +93,13 @@ class cliente(object):
         self.j.screen.move(self.j.cursy, self.j.cursx)
 
     def connect(self):
-        jog = Pyro4.Proxy("PYRONAME:example.greeting") 
+      #  jog = Pyro4.Proxy("PYRONAME:example.greeting") 
       #  my_p = player(self.nickname)
        # jog.__init__(self.j)
 
-#        jog = jogo()
- #       jog.player_enter(self.nickname)
-  #      jog.player_enter("oalr")
+        jog = jogo()
+        jog.player_enter(self.nickname)
+        jog.player_enter("oalr")
         exec(jog, self.nickname)
         
     def set_nickname(self):
