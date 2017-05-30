@@ -46,7 +46,8 @@ class servidor(object):
     
     def create_server(self):
         #global jglobal
-        daemon = Pyro4.Daemon(host=self.ip, port=int(self.porta))
+        self.ip = '192.168.100.4'
+        daemon = Pyro4.Daemon(host=str(self.ip), port=int(self.porta))
         ns = Pyro4.locateNS()
         uri = daemon.register(jogo) #TODO mudar a função
         ns.register("example.greeting", uri)
@@ -62,7 +63,7 @@ class servidor(object):
         win.clear()
         win.addstr(0, 0, text.encode('utf-8'))
         win.refresh()
-        self.ip = text
+        self.ip = str(text)
 
     def set_port(self, par=None):
         win = curses.newwin(1, 20, 0, 0)
@@ -72,7 +73,7 @@ class servidor(object):
         win.clear()
         win.addstr(0, 0, text.encode('utf-8'))
         win.refresh()
-        self.port = text
+        self.port = text[:-1]
 
 #classe responsavel pelo cliente
 class cliente(object):
