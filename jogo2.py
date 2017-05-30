@@ -20,7 +20,7 @@ def backspace(x):
 #Classe responsavel pelo servidor
 class servidor(object):
     def __init__(self, janela):
-        self.ip = "localhost"
+        self.ip = str(Pyro4.socketutil.socket.gethostbyname(Pyro4.socketutil.socket.gethostname()))
         self.porta = "5388"
         self.executando = ""
         self.j = janela
@@ -46,7 +46,7 @@ class servidor(object):
     
     def create_server(self):
         #global jglobal
-        daemon = Pyro4.Daemon(host='172.16.1.79', port=5388)
+        daemon = Pyro4.Daemon(host=self.ip, port=int(self.porta))
         ns = Pyro4.locateNS()
         uri = daemon.register(jogo) #TODO mudar a função
         ns.register("example.greeting", uri)
@@ -84,13 +84,13 @@ class cliente(object):
         self.j.cursx = 0
     def imprime(self):
         self.j.positions = []
-        self.j.screen.addstr(self.j.cy, 0, self.j.labels['l_ip'][0]+': '+self.ip)
-        self.j.positions.append((self.set_ip, (0, self.j.x), (self.j.cy, self.j.cy)))
-        self.j.screen.addstr(self.j.cy-1, 0, self.j.labels['l_port'][0]+": "+self.porta)
-        self.j.positions.append((self.set_port, (0, self.j.x), (self.j.cy-1, self.j.cy-1)))
+        #self.j.screen.addstr(self.j.cy, 0, self.j.labels['l_ip'][0]+': '+self.ip)
+        #self.j.positions.append((self.set_ip, (0, self.j.x), (self.j.cy, self.j.cy)))
+        #self.j.screen.addstr(self.j.cy-1, 0, self.j.labels['l_port'][0]+": "+self.porta)
+        #self.j.positions.append((self.set_port, (0, self.j.x), (self.j.cy-1, self.j.cy-1)))
 
-        self.j.screen.addstr(self.j.cy-2, 0, self.j.labels['l_nickname'][0]+": "+self.nickname)
-        self.j.positions.append((self.set_nickname, (0, self.j.x), (self.j.cy-2, self.j.cy-2)))
+        self.j.screen.addstr(self.j.cy, 0, self.j.labels['l_nickname'][0]+": "+self.nickname)
+        self.j.positions.append((self.set_nickname, (0, self.j.x), (self.j.cy, self.j.cy)))
         self.j.screen.addstr(self.j.cy+2, 0, self.j.labels['l_connect'][0])
         self.j.positions.append((self.connect, (0, self.j.x), (self.j.cy+2, self.j.cy+2)))
         self.j.screen.move(self.j.cursy, self.j.cursx)
@@ -253,6 +253,7 @@ class player(object):
         self.cursorx = None
         self.cursory = None
         self.lifes = 3
+        self.bullet = 0
 
     def set_cursor(self, pos, numplay, y):
         self.cursorx = pos[0]
@@ -337,8 +338,10 @@ class jogo(object):
                         if (g[1].lifes <= 0):
                             g[2].up_won()
                             self.inicializa()
-                            self.round += 1  
+                            self.round += 1
+                    self.players[i[0]].bullet -= 1
                     self.bullets.remove(i)
+
             
     def inicializa(self):
         for p in self.players:
@@ -392,10 +395,12 @@ class jogo(object):
         return(False,'')
 
     def shot(self, nickname):
-        if self.players[nickname].cursory < self.j.cy:
-            self.bullets.append([nickname, self.players[nickname].cursorx, self.players[nickname].cursory+1, time.time(), 'p'])
-        else:
-            self.bullets.append([nickname, self.players[nickname].cursorx, self.players[nickname].cursory-1, time.time(), 'm'])
+        if self.players[nickname].bullet < 3:
+            if self.players[nickname].cursory < self.j.cy:
+                self.bullets.append([nickname, self.players[nickname].cursorx, self.players[nickname].cursory+1, time.time(), 'p'])
+            else:
+                self.bullets.append([nickname, self.players[nickname].cursorx, self.players[nickname].cursory-1, time.time(), 'm'])
+            self.players[nickname].bullet += 1
 
     def move_cursx(self, d, nickname):
         if (d > 0):
